@@ -1,3 +1,3 @@
-#!/bin/env python
+#!/bin/env sh
 
 python src/starter.py
