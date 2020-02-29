@@ -1,4 +1,4 @@
-from constituents.abstract_institution import Institution, Constituent, IndexFond
+from institutions.abstract_institution import Institution, Constituent, IndexFond
 import logging
 
 logger = logging.getLogger()
@@ -13,7 +13,7 @@ class MSCI(Institution):
         import csv
         l = []
 
-        with open("src/constituents/data/msci_id.full.data", newline="") as f:
+        with open("src/institutions/data/msci_id.full.data", newline="") as f:
             reader = csv.DictReader(f)
 
             l = [MSCIIndex(con["name"], con["id"])

@@ -50,6 +50,10 @@ class Institution(ABC):
 
         if listOfSearchedIndex is None:
             listOfSearchedIndex = []
+        
+        # for easier usage
+        if isinstance(listOfSearchedIndex, str):
+            listOfSearchedIndex = [listOfSearchedIndex]
 
         if not isinstance(listOfSearchedIndex, list):
             raise ValueError("No list given.")
