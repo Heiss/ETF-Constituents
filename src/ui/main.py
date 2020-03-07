@@ -21,16 +21,25 @@ class Ui_MainWindow(object):
         if MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(800, 600)
+        self.actionExit = QAction(MainWindow)
+        self.actionExit.setObjectName(u"actionExit")
+        self.actionSettings = QAction(MainWindow)
+        self.actionSettings.setObjectName(u"actionSettings")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
+        self.horizontalLayout = QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 800, 29))
+        self.menuQuit = QMenu(self.menubar)
+        self.menuQuit.setObjectName(u"menuQuit")
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QStatusBar(MainWindow)
-        self.statusbar.setObjectName(u"statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+
+        self.menubar.addAction(self.menuQuit.menuAction())
+        self.menuQuit.addAction(self.actionSettings)
+        self.menuQuit.addAction(self.actionExit)
 
         self.retranslateUi(MainWindow)
 
@@ -39,5 +48,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        self.actionSettings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.menuQuit.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
     # retranslateUi
 

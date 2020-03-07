@@ -8,6 +8,11 @@ This tool enables you to inform yourself about the constituents in all your etfâ
 git clone https://github.com/Heiss/ETF-Constituents.git
 pip install -r requirements.txt
 chmod +x starter.sh
+```
+
+# Start the application
+
+```bash
 ./starter.sh
 ```
 
@@ -23,3 +28,4 @@ The `config.txt` holds all indices, which should be tracked with the software. T
 
 - friendly user interface in qt
 - more institutions supported
+- executable file for windows

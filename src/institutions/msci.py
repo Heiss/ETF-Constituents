@@ -5,10 +5,10 @@ logger = logging.getLogger()
 
 
 class MSCI(Institution):
-    def __init__(self, listOfSearchedIndex=None):
-        super().__init__(listOfSearchedIndex=listOfSearchedIndex)
+    def __init__(self, listOfSearchedIndex=None, autoLoad=True):
+        super().__init__(listOfSearchedIndex=listOfSearchedIndex, autoLoad=autoLoad)
 
-    def load_indexfonds(self, listOfSearchedIndex):
+    def load_indexfonds(self, listOfSearchedIndex, autoLoad=True):
 
         import csv
         l = []
@@ -16,8 +16,12 @@ class MSCI(Institution):
         with open("src/institutions/data/msci_id.full.data", newline="") as f:
             reader = csv.DictReader(f)
 
-            l = [MSCIIndex(con["name"], con["id"])
-                 for con in reader if con["name"] in listOfSearchedIndex]
+            if len(listOfSearchedIndex) == 0:
+                l = [MSCIIndex(con["name"], con["id"], autoLoad=autoLoad)
+                     for con in reader]
+            else:
+                l = [MSCIIndex(con["name"], con["id"], autoLoad=autoLoad)
+                     for con in reader if con["name"] in listOfSearchedIndex]
         # you may also want to remove whitespace characters like `\n` at the end of each line
         return l
 
@@ -25,20 +29,21 @@ class MSCI(Institution):
 class MSCIIndex(IndexFond):
     url = "https://www.msci.com/c/portal/layout?p_l_id=1317535&p_p_cacheability=cacheLevelPage&p_p_id=indexconstituents_WAR_indexconstituents_INSTANCE_nXWh5mC97ig8&p_p_lifecycle=2&p_p_resource_id={}"
 
-    def __init__(self, name, id=None):
-        super().__init__(name, id=id)
+    def __init__(self, name, id=None, autoLoad=True):
+        super().__init__(name, id=id, autoLoad=autoLoad)
 
-    def load_constituents(self):
+    def load_constituents(self, autoLoad=True):
         import requests
 
-        resp = requests.get(self.url.format(self.identifier)).json()
         l = []
+        if autoLoad:
+            resp = requests.get(self.url.format(self.identifier)).json()
 
-        try:
-            for con in resp["constituents"]:
-                l.append(Constituent(
-                    con["security_name"], float(con["security_weight"])))
-        except Exception as e:
-            logger.exception(e)
+            try:
+                for con in resp["constituents"]:
+                    l.append(Constituent(
+                        con["security_name"], float(con["security_weight"])))
+            except Exception as e:
+                logger.exception(e)
 
         return l
