@@ -29,4 +29,5 @@ You can take a look into the settings in the gui (shortcut CTRL+O) to see all ET
 # Upcoming features
 
 - more institutions supported
+- unittests for institutions
 - executable file for windows
