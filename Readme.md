@@ -28,6 +28,5 @@ You can take a look into the settings in the gui (shortcut CTRL+O) to see all ET
 
 # Upcoming features
 
-- friendly user interface in qt
 - more institutions supported
 - executable file for windows

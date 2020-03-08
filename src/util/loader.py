@@ -12,6 +12,9 @@ def load_institution(listOfIndices, progressBar):
     """
     institutions = []
     progressBar.setValue(0)
+    val = 0
+    progressBar.setFormat("Downloading informations: %p%")
+
     valPerIndex = math.ceil(progressBar.maximum() / len(listOfIndices))
 
     for index in listOfIndices:
@@ -27,7 +30,7 @@ def load_institution(listOfIndices, progressBar):
         except Exception as e:
             logger.exception(e)
 
-        val = progressBar.value() + valPerIndex
+        val += valPerIndex
         progressBar.setValue(val if val < 100 else 100)
 
     return institutions

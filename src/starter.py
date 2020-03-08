@@ -24,16 +24,29 @@ def loader(mainWindow):
     from util.loader import load_institution
 
     # progressbar for loading
-    mainWindow.progressBar.setValue(0)
+    progressBar = mainWindow.progressBar
+
+    logger.debug("Start downloading")
+
     with open("config.txt", newline="\n") as file:
         indices = [line.strip() for line in file.readlines()]
-        for inst in load_institution(indices, progressBar=mainWindow.progressBar):
+        for inst in load_institution(indices, progressBar=progressBar):
             logger.debug("loaded institution: {}".format(inst))
 
             institutions.append(inst)
 
     shares = {}
     sharesCount = 0
+
+    logger.debug("Start calculating")
+
+    progressBar.setFormat("Calculating: %p%")
+    progressBar.setValue(0)
+    val = 0
+    valPerRun = progressBar.maximum() / len(institutions)
+
+    index = 0
+
     for institution in institutions:
         for fond in institution.indexFonds:
             for constituent in fond.constituents:
@@ -42,8 +55,13 @@ def loader(mainWindow):
                 except:
                     shares[constituent.name] = constituent.weight
                 sharesCount += constituent.weight
+        index += 1
 
-    # TODO: add shares to tables with column 0: Name and column 1: Weight
+        val += valPerRun
+        """if index % 3000 == 0:
+            progressBar.setValue(val if val < 100 else 100)"""
+
+    # add shares to tables with column 0: Name and column 1: Weight
     table = mainWindow.tableWidget
     logger.debug("clear table")
 
@@ -51,8 +69,16 @@ def loader(mainWindow):
     table.setRowCount(0)
     index = 0
 
+    logger.debug("Start adding")
+
+    progressBar.setFormat("Adding to table: %p%")
+    progressBar.setValue(0)
+    val = 0
+    valPerRun = progressBar.maximum() / len(shares.items())
+
     for name, weight in shares.items():
-        logger.debug("add item {} with weight {} to table".format(name, weight))
+        logger.debug(
+            "add item {} with weight {} to table at index {}".format(name, weight, index))
         numRows = index
 
         itemName = QTableWidgetItem(name)
@@ -63,8 +89,15 @@ def loader(mainWindow):
         table.setItem(numRows, 0, itemName)
         table.setItem(numRows, 1, itemWeight)
         table.setItem(numRows, 2, itemQuota)
-        
+
         index += 1
+
+        val += valPerRun
+        """if index % 1000 == 0:
+            progressBar.setValue(val if val < 100 else 100)"""
+
+    progressBar.setFormat("Done")
+    progressBar.setValue(100)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):

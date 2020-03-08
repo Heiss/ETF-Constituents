@@ -98,6 +98,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Weight (total)", None));
         ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Quota (%)", None));
+        self.progressBar.setFormat(QCoreApplication.translate("MainWindow", u"Loading: %p%", None))
         self.menuQuit.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
     # retranslateUi
 
