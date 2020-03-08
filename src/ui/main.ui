@@ -38,7 +38,12 @@
         </column>
         <column>
          <property name="text">
-          <string>Weight</string>
+          <string>Weight (total)</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Quota (%)</string>
          </property>
         </column>
        </widget>

@@ -33,6 +33,7 @@ def loader(mainWindow):
             institutions.append(inst)
 
     shares = {}
+    sharesCount = 0
     for institution in institutions:
         for fond in institution.indexFonds:
             for constituent in fond.constituents:
@@ -40,6 +41,7 @@ def loader(mainWindow):
                     shares[constituent.name] += constituent.weight
                 except:
                     shares[constituent.name] = constituent.weight
+                sharesCount += constituent.weight
 
     # TODO: add shares to tables with column 0: Name and column 1: Weight
     table = mainWindow.tableWidget
@@ -55,10 +57,12 @@ def loader(mainWindow):
 
         itemName = QTableWidgetItem(name)
         itemWeight = QTableWidgetNumberItem(weight)
+        itemQuota = QTableWidgetNumberItem(weight / sharesCount * 100)
 
         table.insertRow(numRows)
         table.setItem(numRows, 0, itemName)
         table.setItem(numRows, 1, itemWeight)
+        table.setItem(numRows, 2, itemQuota)
         
         index += 1
 

@@ -18,7 +18,9 @@ chmod +x starter.sh
 
 # Configuration
 
-The `config.txt` holds all indices, which should be tracked with the software. The syntax per line: `INSTITUTION INDEXNAME`. E.g. `MSCI WORLD`. Take a look into the file of your needed institution in `src/institutions/data` to find out, which indexname you have to enter.
+The `config.txt` holds all indices, which should be tracked with the software. The syntax per line: `INSTITUTION INDEXNAME`. E.g. `MSCI WORLD`.
+
+You can take a look into the settings in the gui (shortcut CTRL+O) to see all ETF's. You have to reload (shortcut CTRL+R) manually the list of all shares in the main window, after you change the used ETF's.
 
 # current supported index institutions
 
