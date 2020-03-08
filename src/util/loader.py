@@ -5,17 +5,12 @@ import math
 logger = logging.getLogger()
 
 
-def load_institution(listOfIndices, progressBar):
+def load_institution(listOfIndices):
     """
     This method reads in the indices and try to find and load the implementation of the corresponding index provider.
     It returns a list with the initialized institutions.
     """
     institutions = []
-    progressBar.setValue(0)
-    val = 0
-    progressBar.setFormat("Downloading informations: %p%")
-
-    valPerIndex = math.ceil(progressBar.maximum() / len(listOfIndices))
 
     for index in listOfIndices:
         part = str(index).split(" ", 1)
@@ -29,8 +24,5 @@ def load_institution(listOfIndices, progressBar):
             institutions.append(institution(part[1]))
         except Exception as e:
             logger.exception(e)
-
-        val += valPerIndex
-        progressBar.setValue(val if val < 100 else 100)
 
     return institutions

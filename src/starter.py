@@ -3,114 +3,58 @@ import sys
 from ui.main import Ui_MainWindow
 from ui.settingsDialog import Ui_Dialog
 from ui.etfWidget import Ui_Form
-from PySide2.QtWidgets import QApplication, QMainWindow, QDialog, QWidget, QTableWidgetItem
-from qt.QTableWidgetNumberItem import QTableWidgetNumberItem
+from PySide2.QtWidgets import QApplication, QMainWindow, QDialog, QWidget
+from PySide2.QtCore import SIGNAL
 import logging
 import threading
+from qt.LoaderThread import LoaderThread, ProgressBarUpdate
+from qt.QTableWidgetNumberItem import QTableWidgetNumberItem
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
-
-
-def threadLoading(mainWindow):
-    # fork the loading function to not block the mainWindow
-    thread = threading.Thread(target=loader, args=(mainWindow,))
-    logger.debug("Start loading thread")
-    thread.start()
-
-
-def loader(mainWindow):
-    institutions = []
-    from util.loader import load_institution
-
-    # progressbar for loading
-    progressBar = mainWindow.progressBar
-
-    logger.debug("Start downloading")
-
-    with open("config.txt", newline="\n") as file:
-        indices = [line.strip() for line in file.readlines()]
-        for inst in load_institution(indices, progressBar=progressBar):
-            logger.debug("loaded institution: {}".format(inst))
-
-            institutions.append(inst)
-
-    shares = {}
-    sharesCount = 0
-
-    logger.debug("Start calculating")
-
-    progressBar.setFormat("Calculating: %p%")
-    progressBar.setValue(0)
-    val = 0
-    valPerRun = progressBar.maximum() / len(institutions)
-
-    index = 0
-
-    for institution in institutions:
-        for fond in institution.indexFonds:
-            for constituent in fond.constituents:
-                try:
-                    shares[constituent.name] += constituent.weight
-                except:
-                    shares[constituent.name] = constituent.weight
-                sharesCount += constituent.weight
-        index += 1
-
-        val += valPerRun
-        """if index % 3000 == 0:
-            progressBar.setValue(val if val < 100 else 100)"""
-
-    # add shares to tables with column 0: Name and column 1: Weight
-    table = mainWindow.tableWidget
-    logger.debug("clear table")
-
-    table.clearContents()
-    table.setRowCount(0)
-    index = 0
-
-    logger.debug("Start adding")
-
-    progressBar.setFormat("Adding to table: %p%")
-    progressBar.setValue(0)
-    val = 0
-    valPerRun = progressBar.maximum() / len(shares.items())
-
-    for name, weight in shares.items():
-        logger.debug(
-            "add item {} with weight {} to table at index {}".format(name, weight, index))
-        numRows = index
-
-        itemName = QTableWidgetItem(name)
-        itemWeight = QTableWidgetNumberItem(weight)
-        itemQuota = QTableWidgetNumberItem(weight / sharesCount * 100)
-
-        table.insertRow(numRows)
-        table.setItem(numRows, 0, itemName)
-        table.setItem(numRows, 1, itemWeight)
-        table.setItem(numRows, 2, itemQuota)
-
-        index += 1
-
-        val += valPerRun
-        """if index % 1000 == 0:
-            progressBar.setValue(val if val < 100 else 100)"""
-
-    progressBar.setFormat("Done")
-    progressBar.setValue(100)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.actionReload.triggered.connect(lambda: threadLoading(self))
+
+        self.communicator = ProgressBarUpdate(self.progressBar)
+        self.loadingThread = LoaderThread(
+            self, self.progressBar.maximum(), self.communicator)
+
+        self.actionReload.triggered.connect(lambda: self.loadingThread.start())
         self.actionSettings.triggered.connect(self.showDialog)
         self.actionExit.triggered.connect(sys.exit)
 
-        threadLoading(self)
+        self.communicator.value.connect(self.set_progressbar)
+        self.communicator.format.connect(self.set_progressbar_format)
+
+        self.tableWidget.itemSelectionChanged.connect(self.setStatusLabel)
 
         self.show()
+        self.loadingThread.start()
+
+    def setStatusLabel(self):
+        items = self.tableWidget.selectedItems()
+
+        sum = 0
+        for item in items:
+            if isinstance(item, QTableWidgetNumberItem):
+                sum += float(item.text())
+
+        self.label.setText("Selected value of weight: {}".format(sum))
+
+    def set_progressbar(self, val):
+        try:
+            val = int(val)
+            self.progressBar.setValue(val if val < 100 else 100)
+        except:
+            pass
+
+    def set_progressbar_format(self, val):
+        self.progressBar.setFormat(val)
 
     def showDialog(self):
         settingsDialog()
