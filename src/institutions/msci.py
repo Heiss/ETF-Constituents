@@ -9,7 +9,7 @@ class MSCI(Institution):
         super().__init__(listOfSearchedIndex=listOfSearchedIndex, autoLoad=autoLoad)
 
     def load_indexfonds(self, listOfSearchedIndex, autoLoad=True):
-
+        logger.debug("Load fonds from list: {}".format(listOfSearchedIndex))
         import csv
         l = []
 
@@ -23,6 +23,8 @@ class MSCI(Institution):
                 l = [MSCIIndex(con["name"], con["id"], autoLoad=autoLoad)
                      for con in reader if con["name"] in listOfSearchedIndex]
         # you may also want to remove whitespace characters like `\n` at the end of each line
+        logger.debug("found indexfonds: {}".format(l))
+
         return l
 
 

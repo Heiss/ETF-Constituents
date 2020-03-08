@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+import logging
+
+logger = logging.getLogger()
 
 
 class Constituent(ABC):
@@ -7,6 +10,12 @@ class Constituent(ABC):
 
         self.name = name
         self.weight = weight
+
+    def __eq__(self, obj):
+        if isinstance(obj, self.__class__) and obj.name == self.name:
+            return True
+
+        return False
 
     def __repr__(self):
         return f"Constituent: {self.name} ({self.weight})"
@@ -54,6 +63,7 @@ class Institution(ABC):
     def __init__(self, listOfSearchedIndex=None, autoLoad=True):
         super().__init__()
 
+        # if listOfSearchedIndex is empty, it should load all indexFonds
         if listOfSearchedIndex is None:
             listOfSearchedIndex = []
 
@@ -73,16 +83,30 @@ class Institution(ABC):
         The given list will be searched for constituents.
         It has to return a list with IndexFond as Objects. 
         """
-        return []
+        raise NotImplemented()
 
-    def addIndexFondsToWidget(self, qlist):
+    def addIndexFondsToWidget(self, qListWidget, selectIndeces: list = None):
+        """
+        The indexFonds of this institution will be transformed into a QListWidgetItem and added to the given QListWidget.
+        Through the given selectIndeces list, you can specify, whic QListWidgetItem should be selected.
+
+        The given list has to be this struct:
+        [str, str, str]
+        """
         from PySide2.QtWidgets import QListWidgetItem
+
+        if selectIndeces is None:
+            selectIndeces = []
 
         for fond in self.indexFonds:
             item = QListWidgetItem(fond.name)
-            qlist.addItem(item)
 
-    def __str__(self):
+            qListWidget.addItem(item)
+
+            searchName = "{} {}".format(self.__class__.__name__, fond.name)
+            item.setSelected(searchName in selectIndeces)
+
+    def __repr__(self):
         strRet = ""
         strRet += f"---- Provider: {self.__class__.__name__} ----\n"
         for index in self.indexFonds:
