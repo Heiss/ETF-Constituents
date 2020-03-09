@@ -30,4 +30,5 @@ You can take a look into the settings in the gui (shortcut CTRL+O) to see all ET
 
 - more institutions supported
 - unittests for institutions
+- using github actions
 - executable file for windows
