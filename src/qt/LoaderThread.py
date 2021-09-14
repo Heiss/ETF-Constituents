@@ -112,7 +112,7 @@ class LoaderThread(QThread):
             numRows = index
 
             itemName = QTableWidgetItem(name)
-            itemWeight = QTableWidgetNumberItem(weight / sharesCount * 100, "weight")
+            itemWeight = QTableWidgetNumberItem(weight * 100 / sharesCount, "weight")
             itemShares = QTableWidgetNumberItem(weight, "share")
 
             table.insertRow(numRows)

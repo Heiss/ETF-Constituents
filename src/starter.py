@@ -44,6 +44,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if isinstance(item, QTableWidgetNumberItem) and item.name == "weight":
                 sum += float(item.text())
 
+        if abs(sum - 100) < 10**-7:
+            sum = 100
+        else:
+            decimal = 10**5
+            sum = int(sum * decimal) / decimal
+
         self.label.setText("Selected value of weight: {}".format(sum))
 
     def set_progressbar(self, val):
