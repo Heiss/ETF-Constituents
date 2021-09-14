@@ -1,4 +1,5 @@
 import sys
+import institutions
 
 from ui.main import Ui_MainWindow
 from ui.settingsDialog import Ui_Dialog
@@ -50,7 +51,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             decimal = 10**5
             sum = int(sum * decimal) / decimal
 
-        self.label.setText("Selected value of weight: {}".format(sum))
+        self.label.setText("Selected value of weight: {}%".format(sum))
 
     def set_progressbar(self, val):
         try:
@@ -91,18 +92,11 @@ class settingsDialog(QDialog, Ui_Dialog):
         with open("config.txt", newline="") as file:
             selectedList = [line.strip() for line in file.readlines()]
 
-        from institutions.msci import MSCI
-        from institutions.solactive import Solactive
-
-        etf = etfWidget()
-        msci = MSCI(autoLoad=False)
-        msci.addIndexFondsToWidget(etf.listWidget, selectIndeces=selectedList)
-        tabWidget.addTab(etf, MSCI.__name__)
-
-        etf = etfWidget()
-        msci = Solactive(autoLoad=False)
-        msci.addIndexFondsToWidget(etf.listWidget, selectIndeces=selectedList)
-        tabWidget.addTab(etf, Solactive.__name__)
+        for inst in institutions.__all__:
+            etf = etfWidget()
+            tmpInst = inst(autoLoad=False)
+            tmpInst.addIndexFondsToWidget(etf.listWidget, selectIndeces=selectedList)
+            tabWidget.addTab(etf, inst.__name__)
 
     def saveConfig(self):
         # save the selected items in config here

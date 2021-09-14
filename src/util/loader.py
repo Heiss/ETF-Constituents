@@ -18,7 +18,7 @@ def load_institution(listOfIndices):
         try:
             # import given institution
             institution = import_module(
-                f"institutions.{str(part[0]).lower()}").__getattribute__(str(part[0]))
+                f"institutions").__getattribute__(str(part[0]))
 
             # initialize it
             institutions.append(institution(part[1]))
