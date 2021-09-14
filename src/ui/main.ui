@@ -47,7 +47,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Shares</string>
+        <string>Shares (Qty)</string>
        </property>
       </column>
      </widget>
