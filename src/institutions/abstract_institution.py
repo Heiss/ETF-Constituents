@@ -39,7 +39,11 @@ class IndexFond(ABC):
 
     @abstractmethod
     def load_constituents(self, autoLoad=True):
-        pass
+        """
+        Loads the constituents for this Index.
+        It has to return a list of all constituents as Constituent. 
+        """
+        raise NotImplemented()
 
     def getConstituents(self):
         return self.constituents
