@@ -7,7 +7,7 @@ logger = logging.getLogger()
 
 def load_institution(listOfIndices):
     """
-    This method reads in the indices and try to find and load the implementation of the corresponding index provider.
+    This method reads in the indices and tries to find and load the implementation of the corresponding index provider.
     It returns a list with the initialized institutions.
     """
     institutions = []
