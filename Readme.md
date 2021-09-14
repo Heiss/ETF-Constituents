@@ -25,6 +25,7 @@ You can take a look into the settings in the gui (shortcut CTRL+O) to see all ET
 # current supported index institutions
 
 - MSCI
+- Solective
 
 # Upcoming features
 
