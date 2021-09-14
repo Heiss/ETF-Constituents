@@ -45,6 +45,11 @@
         <string>Weight (%)</string>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>Shares</string>
+       </property>
+      </column>
      </widget>
     </item>
     <item>
@@ -73,7 +78,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>29</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuQuit">

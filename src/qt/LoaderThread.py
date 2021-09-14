@@ -54,6 +54,7 @@ class LoaderThread(QThread):
 
         with open("config.txt", newline="\n") as file:
             indices = [line.strip() for line in file.readlines()]
+            logger.debug(indices)
 
             valPerRun = self.maximum / len(indices)
             for inst in load_institution(indices):
@@ -110,14 +111,14 @@ class LoaderThread(QThread):
         for name, weight in shares.items():
             numRows = index
 
-            weight /= len(institutions)
-
             itemName = QTableWidgetItem(name)
-            itemWeight = QTableWidgetNumberItem(weight)
+            itemWeight = QTableWidgetNumberItem(weight / sharesCount * 100, "weight")
+            itemShares = QTableWidgetNumberItem(weight, "share")
 
             table.insertRow(numRows)
             table.setItem(numRows, 0, itemName)
             table.setItem(numRows, 1, itemWeight)
+            table.setItem(numRows, 2, itemShares)
 
             index += 1
 

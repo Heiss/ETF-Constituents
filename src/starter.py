@@ -41,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         sum = 0
         for item in items:
-            if isinstance(item, QTableWidgetNumberItem):
+            if isinstance(item, QTableWidgetNumberItem) and item.name == "weight":
                 sum += float(item.text())
 
         self.label.setText("Selected value of weight: {}".format(sum))
@@ -86,30 +86,35 @@ class settingsDialog(QDialog, Ui_Dialog):
             selectedList = [line.strip() for line in file.readlines()]
 
         from institutions.msci import MSCI
+        from institutions.solactive import Solactive
 
         etf = etfWidget()
         msci = MSCI(autoLoad=False)
-
         msci.addIndexFondsToWidget(etf.listWidget, selectIndeces=selectedList)
+        tabWidget.addTab(etf, MSCI.__name__)
 
-        tabWidget.addTab(etf, "MSCI")
+        etf = etfWidget()
+        msci = Solactive(autoLoad=False)
+        msci.addIndexFondsToWidget(etf.listWidget, selectIndeces=selectedList)
+        tabWidget.addTab(etf, Solactive.__name__)
 
     def saveConfig(self):
         # save the selected items in config here
         logger.debug("Start saveConfig")
+        selectedFonds = []
         for index in range(1, self.tabWidget.count()):
             tabName = self.tabWidget.tabText(index)
             widget = self.tabWidget.widget(index)
 
             items = widget.listWidget.selectedItems()
 
-            selectedFonds = ["{} {}\n".format(
+            selectedFonds += ["{} {}\n".format(
                 tabName, item.text()) for item in items]
             logger.debug(selectedFonds)
 
-            with open("config.txt", "w") as file:
-                file.writelines(selectedFonds)
-                logger.debug("Write lines in config.")
+        with open("config.txt", "w") as file:
+            file.writelines(selectedFonds)
+            logger.debug("Write lines in config.")
 
 
 if __name__ == "__main__":

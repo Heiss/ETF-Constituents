@@ -15,7 +15,7 @@ class SolactiveIndex(IndexFond):
     def load_constituents(self, autoLoad=True):
         l = []
         if autoLoad:
-            rq = requests.get(self.URL.format(self.identifier)).json()
+            rq = requests.get(self.URL.format(self.identifier))
             soup = BeautifulSoup(rq.text)
             table = soup.find('table', attrs={
                 'class': 'members table table-hover datatable dataTable no-footer'})
@@ -24,8 +24,9 @@ class SolactiveIndex(IndexFond):
 
             try:
                 for row in rows:
+                    data = row.find_all('td')
                     l.append(Constituent(
-                        row[0].text.strip(), float(row[1].text.strip())))
+                            data[0].text.strip(), float(data[1].text.strip())))
             except Exception as e:
                 logger.exception(e)
 
@@ -40,7 +41,6 @@ class Solactive(Institution):
 
     def load_indexfonds(self, listOfSearchedIndex, autoLoad=True):
         logger.debug("Load fonds from list: {}".format(listOfSearchedIndex))
-        import csv
         l = []
 
         rq = requests.get(self.URL)
@@ -55,7 +55,7 @@ class Solactive(Institution):
         for row in rows:
             data = row.find_all('td')
             if len(listOfSearchedIndex) > 0:
-                if data[0].text in listOfSearchedIndex:
+                if data[0].text.strip() in listOfSearchedIndex:
                     l.append(SolactiveIndex(
                         data[0].text.strip(), data[1].text.strip(), autoLoad=autoLoad))
             else:
